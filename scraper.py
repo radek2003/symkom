@@ -36,7 +36,7 @@ class StockInfo:
         return soup  
     
     def make_many_soups(self):
-        self.soup_summary = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}?p={self.symbol}')
+        #self.soup_summary = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}?p={self.symbol}')
         self.soup_financials = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/financials?p={self.symbol}')
         self.soup_cashflow = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/cash-flow?p={self.symbol}')
         self.soup_balancesheet = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/balance-sheet?p={self.symbol}')
