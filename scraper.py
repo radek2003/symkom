@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 import requests
 import regex as re
 from multiprocessing.pool import ThreadPool
-from datetime import datetime, timedelta
 import random
 
 class StockInfo:
@@ -37,15 +36,10 @@ class StockInfo:
         return soup  
     
     def make_many_soups(self):
-        now = datetime.utcnow()
-        dateto = int(now.timestamp())
-        dt = timedelta(days=366)
-        datefrom = int((now - dt).timestamp())
         self.soup_summary = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}?p={self.symbol}')
         self.soup_financials = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/financials?p={self.symbol}')
         self.soup_cashflow = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/cash-flow?p={self.symbol}')
         self.soup_balancesheet = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/balance-sheet?p={self.symbol}')
-        #self.soup_history = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/history?period1={datefrom}&period2={dateto}&interval=1wk&filter=history&frequency=1wk&includeAdjustedClose=true')
     
     
     def get_ColumNames(self, soup):
@@ -105,3 +99,8 @@ class StockInfo:
             return 0
 
         return pd.json_normalize(dictList)
+    
+    def get_historicalPrices(self):
+        data = yf.download(self.symbol, start='2018-09-11')
+        return data["Adj Close"].round(2)
+        

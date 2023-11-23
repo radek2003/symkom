@@ -3,3 +3,4 @@ pandas
 yfinance
 bs4
 regex
+pandas_datareader
