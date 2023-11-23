@@ -1,0 +1,5 @@
+numpy
+pandas
+yfinance
+bs4
+regex
