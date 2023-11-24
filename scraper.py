@@ -36,7 +36,6 @@ class StockInfo:
         return soup  
     
     def make_many_soups(self):
-        #self.soup_summary = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}?p={self.symbol}')
         self.soup_financials = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/financials?p={self.symbol}')
         self.soup_cashflow = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/cash-flow?p={self.symbol}')
         self.soup_balancesheet = self.make_soup(f'https://finance.yahoo.com/quote/{self.symbol}/balance-sheet?p={self.symbol}')
@@ -62,7 +61,10 @@ class StockInfo:
             
             cleanedRow = {}
             for c, val in enumerate(rowValues):
-                cleanedRow[columNames[c]] = val.text
+                values = str(val.text)
+                values = values.replace(",", "", values.count(",") - 1)
+                values = values.replace(",", ".")
+                cleanedRow[columNames[c]] = values
             dictList.append(cleanedRow)
         
         return dictList
@@ -103,4 +105,19 @@ class StockInfo:
     def get_historicalPrices(self):
         data = yf.download(self.symbol, start='2018-09-11')
         return data["Adj Close"].round(2)
+    
+    def get_shareCount(self):
+        balancesheet = self.get_BalanceSheet()
+        return balancesheet[balancesheet["Breakdown"] == "Share Issued"].iloc[:,1:2].astype(float).values[0][0]
         
+    def get_totalDebt(self):
+        balancesheet = self.get_BalanceSheet()
+        return balancesheet[balancesheet["Breakdown"] == "Total Debt"].iloc[:,1:2].astype(float).values[0][0]
+    
+    def get_FreeCash(self):
+        FreeCashFlow = self.get_FreeCashFlow()
+        return FreeCashFlow[FreeCashFlow["Breakdown"] == "Free Cash Flow"].iloc[:,1:2].astype(float).values[0][0]
+
+    def get_BaseRevenue(self):
+        IncomeStatement = self.get_IncomeStatement()
+        return IncomeStatement[IncomeStatement["Breakdown"] == "Total Revenue"].iloc[:,1:2].astype(float).values[0][0]

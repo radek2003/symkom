@@ -1,10 +1,10 @@
 import numpy as np
+from scraper import StockInfo
 
 
 class DCF:
-    def __init__(self, ticker, operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, 
+    def __init__(self, operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, 
                  salesToCapital, baseRevenue, forecastYears = 10) -> None:
-        self.ticker = ticker
         self.operatingMargin = operatingMargin
         self.RevenueGrowthRate = RevenueGrowthRate
         self.Costofcapital = Costofcapital
@@ -97,10 +97,26 @@ class DCF:
 
         return self.PV
     
-    def make_Value(self):
+    def make_EquityValue(self):
         if self.FCFF.size <= 0:
             self.make_PV()
         
-        value = np.sum(self.PV) + (self.terminalValue * self.CumulatedDiscountFactor[-1])
-        
-        return value
+        equityValue = np.sum(self.PV) + (self.terminalValue * self.CumulatedDiscountFactor[-1])
+        return equityValue
+    
+
+def make_simpleValuation(ticker, operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, 
+                 salesToCapital, forecastYears):
+    
+    info = StockInfo(ticker)
+    baseRevenue = info.get_BaseRevenue()
+    debt = info.get_totalDebt()
+    shares = info.get_shareCount()
+    cash = info.get_FreeCash()
+    
+    valuation = DCF(operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, salesToCapital, baseRevenue, forecastYears)
+    EquityValue = valuation.make_EquityValue()
+    
+    stockPrice = (EquityValue + cash - debt) / shares
+
+    return stockPrice
