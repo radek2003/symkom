@@ -1,18 +1,17 @@
 import numpy as np
-from scraper import StockInfo
 
 
 class DCF:
-    def __init__(self, operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, 
-                 salesToCapital, baseRevenue, forecastYears = 10) -> None:
+    def __init__(self, operatingMargin, revenueGrowthRate, taxRate, costOfCapital, 
+                 salesToCapital, baseRevenue, forecastYears, terminalRevenueGrowthRate) -> None:
         self.operatingMargin = operatingMargin
-        self.RevenueGrowthRate = RevenueGrowthRate
-        self.Costofcapital = Costofcapital
-        self.TaxRate = TaxRate
+        self.revenueGrowthRate = revenueGrowthRate
+        self.costOfCapital = costOfCapital
+        self.taxRate = taxRate
         self.forecastYears = forecastYears
         self.baseRevenue = baseRevenue
         self.salesToCapital = salesToCapital
-        self.terminalYear = {"RevenueGrowthRate" : RevenueGrowthRate[-1], "Costofcapital" : Costofcapital[-1]}
+        self.terminalYear = {"revenueGrowthRate" : terminalRevenueGrowthRate, "costOfCapital" : costOfCapital[-1]}
         
         self.CumulatedDiscountFactor = np.array([])
         self.OperatingIncomeForecast = np.array([])
@@ -25,20 +24,20 @@ class DCF:
     def make_CumulatedDiscountFactor(self):
         for i in range(self.forecastYears):
             if i == 0:
-                self.CumulatedDiscountFactor = np.append(self.CumulatedDiscountFactor, 1 / (1 + self.Costofcapital[i]))
+                self.CumulatedDiscountFactor = np.append(self.CumulatedDiscountFactor, 1 / (1 + self.costOfCapital[i]))
             else:
-                self.CumulatedDiscountFactor = np.append(self.CumulatedDiscountFactor, self.CumulatedDiscountFactor[i - 1] * (1 / (1 + self.Costofcapital[i])))
+                self.CumulatedDiscountFactor = np.append(self.CumulatedDiscountFactor, self.CumulatedDiscountFactor[i - 1] * (1 / (1 + self.costOfCapital[i])))
                 
         return self.CumulatedDiscountFactor
     
     def make_RevenueForecast(self):
         for i in range(self.forecastYears):
             if i == 0:
-                self.RevenueForecast = np.append(self.RevenueForecast, self.baseRevenue * (self.RevenueGrowthRate[i] + 1))
+                self.RevenueForecast = np.append(self.RevenueForecast, self.baseRevenue * (self.revenueGrowthRate[i] + 1))
             else:
-                self.RevenueForecast = np.append(self.RevenueForecast, self.RevenueForecast[i - 1] * (self.RevenueGrowthRate[i] + 1))
+                self.RevenueForecast = np.append(self.RevenueForecast, self.RevenueForecast[i - 1] * (self.revenueGrowthRate[i] + 1))
         
-        self.terminalYear["RevenueForecast"] = self.RevenueForecast[self.forecastYears - 2] * (self.RevenueGrowthRate[self.forecastYears - 1] + 1)
+        self.terminalYear["RevenueForecast"] = self.RevenueForecast[self.forecastYears - 2] * (self.revenueGrowthRate[self.forecastYears - 1] + 1)
         return self.RevenueForecast
     
     def make_OperatingIncomeForecast(self):
@@ -57,9 +56,9 @@ class DCF:
             self.make_OperatingIncomeForecast()
 
         for i in range(self.forecastYears):
-            self.EBITForecast = np.append(self.EBITForecast, self.OperatingIncomeForecast[i] * (1 - self.TaxRate[i]))    
+            self.EBITForecast = np.append(self.EBITForecast, self.OperatingIncomeForecast[i] * (1 - self.taxRate[i]))    
         
-        self.terminalYear["EBIT"] = self.terminalYear["OperatingIncomeForecast"] * (1 - self.TaxRate[-1])
+        self.terminalYear["EBIT"] = self.terminalYear["OperatingIncomeForecast"] * (1 - self.taxRate[-1])
         return self.EBITForecast
     
     def make_ReinvestmentsForecast(self):
@@ -84,7 +83,7 @@ class DCF:
             self.FCFF = np.append(self.FCFF, self.EBITForecast[i] - self.ReinvestmentsForecast[i])
         self.terminalYear["FCFF"] = self.terminalYear["EBIT"] - self.terminalYear["ReinvestmentsForecast"]
         
-        self.terminalValue = self.terminalYear["FCFF"] / (self.terminalYear["Costofcapital"] - self.terminalYear["RevenueGrowthRate"])
+        self.terminalValue = self.terminalYear["FCFF"] / (self.terminalYear["costOfCapital"] - self.terminalYear["revenueGrowthRate"])
         return self.FCFF
     
     def make_PV(self):
@@ -105,18 +104,3 @@ class DCF:
         return equityValue
     
 
-def make_simpleValuation(ticker, operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, 
-                 salesToCapital, forecastYears):
-    
-    info = StockInfo(ticker)
-    baseRevenue = info.get_BaseRevenue()
-    debt = info.get_totalDebt()
-    shares = info.get_shareCount()
-    cash = info.get_FreeCash()
-    
-    valuation = DCF(operatingMargin, RevenueGrowthRate, TaxRate, Costofcapital, salesToCapital, baseRevenue, forecastYears)
-    EquityValue = valuation.make_EquityValue()
-    
-    stockPrice = (EquityValue + cash - debt) / shares
-
-    return stockPrice
