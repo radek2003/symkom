@@ -18,8 +18,7 @@ def make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapi
     return stockPrice
 
 
-def get_valuationChecker(forecastYears):
-    df = pd.read_csv('tickers.csv')
+def get_valuationChecker(df, forecastYears):
     tickers = df["ticker"].to_list()
 
     for ticker in tickers:
@@ -58,8 +57,7 @@ def get_valuationChecker(forecastYears):
         
         print(valuation)
 
-def get_valuationDistribution(forecastYears):
-    df = pd.read_csv('tickers.csv')
+def get_valuationDistribution(df, forecastYears):
     tickers = df["ticker"].to_list()
 
     for ticker in tickers:
@@ -103,6 +101,6 @@ def get_valuationDistribution(forecastYears):
 # https://numpy.org/doc/1.16/reference/routines.random.html
 if __name__ == "__main__":
     forecastYears = 10
-
-    get_valuationChecker(forecastYears)
-    get_valuationDistribution(forecastYears)
+    df = pd.read_csv('csv/tickers.csv')
+    get_valuationChecker(df, forecastYears)
+    get_valuationDistribution(df, forecastYears)
