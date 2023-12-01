@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from multiprocessing.pool import ThreadPool
 import matplotlib.pyplot as plt
+from stqdm import stqdm
 
 from dcfModel import DCF
 from scraper import StockInfo
@@ -57,7 +58,7 @@ def get_valuationChecker(df, forecastYears):
         
         print(valuation)
 
-def get_valuationDistribution(df, forecastYears):
+def get_valuationDistribution(df, forecastYears, k = 1000):
     tickers = df["ticker"].to_list()
 
     for ticker in tickers:
@@ -72,18 +73,19 @@ def get_valuationDistribution(df, forecastYears):
         #,industry,salesToCapital,salesToCapitalDistribution,,
 
         terminalRevenueGrowthRate = tickerData['RevenueGrowthRateTerminalValue'] / 100 # może być średnia z przemysłu
-        operatingMargin = trends.createTrendAndDistribution(tickerData['operatingMarginStart'], tickerData['operatingMarginTarget'], 
+        operatingMargin = trends.createTrendAndDistribution(k, tickerData['operatingMarginStart'], tickerData['operatingMarginTarget'], 
                                                 forecastYears, tickerData['operatingMarginGrowthTrend'], tickerData['operatingMarginDistribution'])
-        revenueGrowthRate = trends.createTrendAndDistribution(tickerData['RevenueGrowthRateStart'], tickerData['RevenueGrowthRateEnd'], 
+        revenueGrowthRate = trends.createTrendAndDistribution(k, tickerData['RevenueGrowthRateStart'], tickerData['RevenueGrowthRateEnd'], 
                                                 forecastYears, tickerData['RevenueGrowthRateGrowthTrend'], tickerData['RevenueGrowthRateDistribution'])
-        costOfCapital = trends.createTrendAndDistribution(tickerData['CostofcapitalStart'], tickerData['CostofcapitalEnd'], 
+        costOfCapital = trends.createTrendAndDistribution(k, tickerData['CostofcapitalStart'], tickerData['CostofcapitalEnd'], 
                                            forecastYears, tickerData['CostofcapitalTrend'], tickerData['CostofcapitalDistribution'])
-        taxRate = trends.createTrendAndDistribution(tickerData['TaxRateStart'], tickerData['TaxRateEnd'], 
-                                                    forecastYears, 'linear', tickerData['TaxRateEndDistribution'])
-        salesToCapital = trends.createTrendAndDistribution(1.5, 1.51, forecastYears, 'linear', '')
+        taxRate = trends.createTrendAndDistribution(k, tickerData['TaxRateStart'], tickerData['TaxRateEnd'], 
+                                                    forecastYears, 'linear', "")
+        #tickerData['TaxRateEndDistribution']
+        salesToCapital = trends.createTrendAndDistribution(k, 1.5, 1.51, forecastYears, 'linear', '')
 
         valuationDensity = []
-        for i in range(len(operatingMargin)):
+        for i in stqdm(range(len(operatingMargin))):
             valuation = make_simpleValuation(operatingMargin[i], revenueGrowthRate[i], taxRate[i], costOfCapital[i], salesToCapital[i] * 100, 
                                              forecastYears, terminalRevenueGrowthRate, baseRevenue, debt, shares, cash)
             valuationDensity.append(valuation)
@@ -94,8 +96,7 @@ def get_valuationDistribution(df, forecastYears):
         print(costOfCapital[-1])
         print(salesToCapital[-1])
         
-        plt.hist(valuationDensity)
-        plt.show() 
+    return valuationDensity
 #createTrendAndDistribution
 
 # https://numpy.org/doc/1.16/reference/routines.random.html

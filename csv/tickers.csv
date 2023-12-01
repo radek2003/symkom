@@ -1,2 +1,2 @@
 ticker,industry,operatingMarginStart,operatingMarginTarget,operatingMarginDistribution,operatingMarginGrowthTrend,RevenueGrowthRateStart,RevenueGrowthRateEnd,RevenueGrowthRateTerminalValue,RevenueGrowthRateDistribution,RevenueGrowthRateGrowthTrend,CostofcapitalStart,CostofcapitalEnd,CostofcapitalTrend,CostofcapitalDistribution,salesToCapital,salesToCapitalDistribution,TaxRateStart,TaxRateEnd,TaxRateEndDistribution
-NVDA,Semiconductor,20,40,normal,linear,34,10,6,uniform,cyclical,12.21,8.4,linear,triangular,1.15,normal,10,20,uniform
+NVDA,Semiconductors,20,40,normal,linear,34,10,6,uniform,cyclical,12.21,8.4,linear,triangular,1.15,normal,10,20,uniform

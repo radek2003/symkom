@@ -18,13 +18,13 @@ def createTrend(start, stop, period, trend):
     if trend == 'linear':
         return createLinearTrend(start, stop, period)
     
-def createTrendAndDistribution(start, stop, period, trend, distribution, k = 100, target = "stop"):
+def createTrendAndDistribution(k, start, stop, period, trend, distribution, target = "stop"):
     numberList = []
     if target == "stop":
         if distribution == 'normal':
-            stop = np.random.normal(start, 2, k)
+            stop = np.random.normal(np.mean([start, stop]), 5, k)
         elif distribution == 'uniform':
-            stop = np.random.uniform(start - 1, start + 1, k)
+            stop = np.random.uniform(start, stop + start, k)
         elif distribution == 'triangular':
             if start < stop:
                 stop = np.random.triangular(start, np.mean([start, stop]), stop, k)
@@ -37,6 +37,5 @@ def createTrendAndDistribution(start, stop, period, trend, distribution, k = 100
             numberList = [createCyclicalTrend(start, x, period) for x in stop]
         if trend == 'linear':
             numberList = [createLinearTrend(start, x, period) for x in stop]
-        #print(numberList[0])
     
     return numberList
