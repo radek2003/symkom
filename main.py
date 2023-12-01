@@ -58,9 +58,9 @@ def get_valuationChecker(df, forecastYears):
         
         print(valuation)
 
-def get_valuationDistribution(df, forecastYears, k = 1000):
+def get_valuationDistribution(df, ticker, forecastYears, k = 1000):
     tickers = df["ticker"].to_list()
-
+    tickers = [ticker]
     for ticker in tickers:
         info = StockInfo(ticker)
         baseRevenue = info.get_BaseRevenue()
