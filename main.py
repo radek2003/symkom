@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
-from multiprocessing.pool import ThreadPool
 import matplotlib.pyplot as plt
 from stqdm import stqdm
-
+import concurrent.futures
 from dcfModel import DCF
 from scraper import StockInfo
 import trends
@@ -55,13 +54,10 @@ def get_valuationChecker(df, forecastYears):
         print(taxRate)
         print(costOfCapital)
         print(salesToCapital)
-        
         print(valuation)
 
-def get_valuationDistribution(df, ticker, forecastYears, k = 1000):
-    tickers = df["ticker"].to_list()
-    tickers = [ticker]
-    for ticker in tickers:
+def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
+    for ticker in stqdm(tickers):
         info = StockInfo(ticker)
         baseRevenue = info.get_BaseRevenue()
         debt = info.get_totalDebt()
@@ -83,12 +79,15 @@ def get_valuationDistribution(df, ticker, forecastYears, k = 1000):
                                                     forecastYears, 'linear', "")
         #tickerData['TaxRateEndDistribution']
         salesToCapital = trends.createTrendAndDistribution(k, 1.5, 1.51, forecastYears, 'linear', '')
-
         valuationDensity = []
-        for i in stqdm(range(len(operatingMargin))):
-            valuation = make_simpleValuation(operatingMargin[i], revenueGrowthRate[i], taxRate[i], costOfCapital[i], salesToCapital[i] * 100, 
-                                             forecastYears, terminalRevenueGrowthRate, baseRevenue, debt, shares, cash)
-            valuationDensity.append(valuation)
+        with concurrent.futures.ProcessPoolExecutor() as executor:            
+            future_to_val = {executor.submit(make_simpleValuation, operatingMargin[i], revenueGrowthRate[i], taxRate[i], 
+                                             costOfCapital[i], salesToCapital[i] * 100, forecastYears, terminalRevenueGrowthRate, 
+                                             baseRevenue, debt, shares, cash): i for i in range(len(operatingMargin))}
+            for future in concurrent.futures.as_completed(future_to_val):
+                url = future_to_val[future]
+                data = future.result()
+                valuationDensity.append(data)
             
         print(operatingMargin[-1])
         print(revenueGrowthRate[-1])
@@ -97,11 +96,10 @@ def get_valuationDistribution(df, ticker, forecastYears, k = 1000):
         print(salesToCapital[-1])
         
     return valuationDensity
-#createTrendAndDistribution
+
 
 # https://numpy.org/doc/1.16/reference/routines.random.html
 if __name__ == "__main__":
     forecastYears = 10
     df = pd.read_csv('csv/tickers.csv')
-    get_valuationChecker(df, forecastYears)
-    get_valuationDistribution(df, forecastYears)
+    get_valuationChecker(df, 10)

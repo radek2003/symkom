@@ -11,8 +11,8 @@ if st.button('Save changed df'):
     edited_df.to_csv('csv/tickers.csv', index=False)
 
 option = st.selectbox("Select ticker for symulation", df["ticker"].to_list())
-k = st.number_input("Number of symulations", 1, 10000000000, 1000)
+k = st.number_input("Number of symulations", 1, 900000000000, 1000, step=1000)
 if st.button('Start symulation'):
-    dist = main.get_valuationDistribution(df, option, 10, k)
+    dist = main.get_valuationDistribution(df, [option], 10, k)
     fig = px.histogram(dist)
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, nbins=100)
