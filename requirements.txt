@@ -3,7 +3,6 @@ pandas
 yfinance
 bs4
 regex
-pandas_datareader
 matplotlib
 streamlit
 plotly

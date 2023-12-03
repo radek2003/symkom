@@ -18,9 +18,7 @@ def make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapi
     return stockPrice
 
 
-def get_valuationChecker(df, forecastYears):
-    tickers = df["ticker"].to_list()
-
+def get_valuationChecker(df, tickers, forecastYears):
     for ticker in tickers:
         info = StockInfo(ticker)
         baseRevenue = info.get_BaseRevenue()
@@ -29,11 +27,6 @@ def get_valuationChecker(df, forecastYears):
         cash = info.get_FreeCash()
         tickerData = df[df["ticker"] == ticker]
         tickerData = tickerData.to_dict('records')[0]
-        
-        #,industry,,,operatingMarginDistribution,,
-        # RevenueGrowthRateDistribution,,
-        # ,CostofcapitalDistribution,salesToCapital,salesToCapitalDistribution,,
-        # ,TaxRateEndDistribution
 
         terminalRevenueGrowthRate = tickerData['RevenueGrowthRateTerminalValue'] / 100 # może być średnia z przemysłu
         operatingMargin = trends.createTrend(tickerData['operatingMarginStart'], tickerData['operatingMarginTarget'], 
@@ -44,9 +37,9 @@ def get_valuationChecker(df, forecastYears):
         costOfCapital = trends.createTrend(tickerData['CostofcapitalStart'], tickerData['CostofcapitalEnd'], 
                                            forecastYears, tickerData['CostofcapitalTrend'])
         taxRate = trends.createTrend(tickerData['TaxRateStart'], tickerData['TaxRateEnd'], forecastYears, 'linear' )
-        salesToCapital = trends.createTrend(1.5, 1.51, forecastYears, 'linear' ) * 100
+        salesToCapital = trends.createTrend(tickerData['salesToCapital'], tickerData['salesToCapital'], forecastYears, 'linear')
 
-        valuation = make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapital, salesToCapital, forecastYears, 
+        valuation = make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapital, salesToCapital * 100, forecastYears, 
                                 terminalRevenueGrowthRate, baseRevenue, debt, shares, cash)
         
         print(operatingMargin)
@@ -66,8 +59,6 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
         tickerData = df[df["ticker"] == ticker]
         tickerData = tickerData.to_dict('records')[0]
         
-        #,industry,salesToCapital,salesToCapitalDistribution,,
-
         terminalRevenueGrowthRate = tickerData['RevenueGrowthRateTerminalValue'] / 100 # może być średnia z przemysłu
         operatingMargin = trends.createTrendAndDistribution(k, tickerData['operatingMarginStart'], tickerData['operatingMarginTarget'], 
                                                 forecastYears, tickerData['operatingMarginGrowthTrend'], tickerData['operatingMarginDistribution'])
@@ -76,25 +67,20 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
         costOfCapital = trends.createTrendAndDistribution(k, tickerData['CostofcapitalStart'], tickerData['CostofcapitalEnd'], 
                                            forecastYears, tickerData['CostofcapitalTrend'], tickerData['CostofcapitalDistribution'])
         taxRate = trends.createTrendAndDistribution(k, tickerData['TaxRateStart'], tickerData['TaxRateEnd'], 
-                                                    forecastYears, 'linear', "")
-        #tickerData['TaxRateEndDistribution']
-        salesToCapital = trends.createTrendAndDistribution(k, 1.5, 1.51, forecastYears, 'linear', '')
+                                                    forecastYears, 'linear', tickerData['TaxRateEndDistribution'])
+        salesToCapital = trends.createTrendAndDistribution(k, tickerData['salesToCapital'], tickerData['salesToCapital'] + 0.01, forecastYears, 'linear', '')
         valuationDensity = []
         with concurrent.futures.ProcessPoolExecutor() as executor:            
             future_to_val = {executor.submit(make_simpleValuation, operatingMargin[i], revenueGrowthRate[i], taxRate[i], 
                                              costOfCapital[i], salesToCapital[i] * 100, forecastYears, terminalRevenueGrowthRate, 
-                                             baseRevenue, debt, shares, cash): i for i in range(len(operatingMargin))}
+                                             baseRevenue, debt, shares, cash): i for i in stqdm(range(len(operatingMargin)))}
             for future in concurrent.futures.as_completed(future_to_val):
                 url = future_to_val[future]
                 data = future.result()
-                valuationDensity.append(data)
+                if data > 0:
+                    valuationDensity.append(data)
             
-        print(operatingMargin[-1])
-        print(revenueGrowthRate[-1])
-        print(taxRate[-1])
-        print(costOfCapital[-1])
-        print(salesToCapital[-1])
-        
+
     return valuationDensity
 
 
@@ -102,4 +88,4 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
 if __name__ == "__main__":
     forecastYears = 10
     df = pd.read_csv('csv/tickers.csv')
-    get_valuationChecker(df, 10)
+    get_valuationChecker(df, ["NVDA"], 10)
