@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import numpy as np
 import main
 st.set_page_config(layout="wide")
 
@@ -13,6 +14,7 @@ if st.button('Save changed df'):
 option = st.selectbox("Select ticker for symulation", df["ticker"].to_list())
 k = st.number_input("Number of symulations", 1, 900000000000, 1000, step=1000)
 if st.button('Start symulation'):
-    dist = main.get_valuationDistribution(df, [option], 10, k)
-    fig = px.histogram(dist)
-    st.plotly_chart(fig, nbins=100)
+    denst = main.get_valuationDistribution(df, [option], 10, k)
+    st.write(denst)
+    fig = px.bar(x = denst[1], y = denst[0])
+    st.plotly_chart(fig)

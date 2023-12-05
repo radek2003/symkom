@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from stqdm import stqdm
 import concurrent.futures
+import json
+
 from dcfModel import DCF
 from scraper import StockInfo
 import trends
@@ -50,6 +51,7 @@ def get_valuationChecker(df, tickers, forecastYears):
         print(valuation)
 
 def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
+    dictList = {}
     for ticker in stqdm(tickers):
         info = StockInfo(ticker)
         baseRevenue = info.get_BaseRevenue()
@@ -79,8 +81,17 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                 data = future.result()
                 if data > 0:
                     valuationDensity.append(data)
-            
-
+        
+        valuationDensity = np.histogram(valuationDensity, density=True, bins = int(np.ceil(np.sqrt(k))))
+        valuationDensity = [valuationDensity[0], 0.5*(valuationDensity[1][1:]+valuationDensity[1][:-1])]
+        dictList[ticker] = {
+                "x" : list(valuationDensity[1]),
+                "y" : list(valuationDensity[0])}
+        
+    valJSON = json.dumps(dictList)
+    with open('valJSON.json', 'w') as f:
+        json.dump(valJSON, f)
+        
     return valuationDensity
 
 
