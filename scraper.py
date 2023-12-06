@@ -121,3 +121,7 @@ class StockInfo:
     def get_BaseRevenue(self):
         IncomeStatement = self.get_IncomeStatement()
         return IncomeStatement[IncomeStatement["Breakdown"] == "Total Revenue"].iloc[:,1:2].astype(float).values[0][0]
+    
+    def get_marketStockPrice(self):
+        price = self.get_historicalPrices()
+        return float(price.iloc[-1])

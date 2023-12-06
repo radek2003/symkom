@@ -81,7 +81,9 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                 if data > 0:
                     valuationDensity.append(data)
         
-        valuationDensity = np.histogram(valuationDensity, density=True, bins = int(np.ceil(np.sqrt(k))))
+        valuationDensity = list(np.histogram(valuationDensity, density=True, bins = int(np.ceil(np.sqrt(k)))))
+        
+        valuationDensity[0] = valuationDensity[0] / np.sum(valuationDensity[0])
         valuationDensity = [valuationDensity[0], 0.5*(valuationDensity[1][1:]+valuationDensity[1][:-1])]
         dictList[ticker] = {
                 "x" : list(valuationDensity[1]),

@@ -1,7 +1,7 @@
 ﻿ticker,industry,operatingMarginStart,operatingMarginTarget,operatingMarginDistribution,operatingMarginGrowthTrend,RevenueGrowthRateStart,RevenueGrowthRateEnd,RevenueGrowthRateTerminalValue,RevenueGrowthRateDistribution,RevenueGrowthRateGrowthTrend,CostofcapitalStart,CostofcapitalEnd,CostofcapitalTrend,CostofcapitalDistribution,salesToCapital,salesToCapitalDistribution,TaxRateStart,TaxRateEnd,TaxRateEndDistribution
 NVDA,Semiconductors,20.0,40.0,normal,linear,34.0,10.0,6,uniform,cyclical,12.21,8.4,linear,triangular,1.15,normal,10.0,20.0,uniform
 WMT,Retail,3.95,5,normal,linear,6.79,7.0,5,uniform,linear,7.76,10.67,linear,normal,3.5,normal,37.4,33.3,uniform
-SHEL,Energry,8.74,15.1,cyclical,cyclical,-8.26,-21.01,2,linear,linear,7.53,8.43,linear,uniform,1.16,triangular,13.4,10.4,uniform
+SHEL,Energry,8.74,15.1,cyclical,cyclical,-8.26,-21.01,2,linear,linear,7.53,8.43,linear,uniform,1.16,triangular,13.4,10.4,normal
 AMZN,Retail,7.82,20,normal,linear,9.4,10,6,normal,linear,10.86,8.36,linear,triangular,5,normal,21.0,21.0,uniform
 AAPL,Technology,29.23,29.82,normal,linear,-2,10.6,5,linear,linear,7.69,8.59,linear,normal,5,triangular,16.2,20.0,uniform
 TMUS,Telecommunications,19.13,19.25,normal,linear,-2.1,-1.16,5,linear,linear,7.93,6.74,linear,normal,3.84,normal,24.47,24.47,uniform
