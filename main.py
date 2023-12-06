@@ -61,7 +61,7 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
         tickerData = df[df["ticker"] == ticker]
         tickerData = tickerData.to_dict('records')[0]
         
-        terminalRevenueGrowthRate = tickerData['RevenueGrowthRateTerminalValue'] / 100 # może być średnia z przemysłu
+        terminalRevenueGrowthRate = tickerData['RevenueGrowthRateTerminalValue'] / 100
         operatingMargin = trends.createTrendAndDistribution(k, tickerData['operatingMarginStart'], tickerData['operatingMarginTarget'], 
                                                 forecastYears, tickerData['operatingMarginGrowthTrend'], tickerData['operatingMarginDistribution'])
         revenueGrowthRate = trends.createTrendAndDistribution(k, tickerData['RevenueGrowthRateStart'], tickerData['RevenueGrowthRateEnd'], 
@@ -70,14 +70,13 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                                            forecastYears, tickerData['CostofcapitalTrend'], tickerData['CostofcapitalDistribution'])
         taxRate = trends.createTrendAndDistribution(k, tickerData['TaxRateStart'], tickerData['TaxRateEnd'], 
                                                     forecastYears, 'linear', tickerData['TaxRateEndDistribution'])
-        salesToCapital = trends.createTrendAndDistribution(k, tickerData['salesToCapital'], tickerData['salesToCapital'] + 0.01, forecastYears, 'linear', '')
+        salesToCapital = trends.createTrendAndDistribution(k, tickerData['salesToCapital'], tickerData['salesToCapital'], forecastYears, 'linear', '')
         valuationDensity = []
         with concurrent.futures.ProcessPoolExecutor() as executor:            
             future_to_val = {executor.submit(make_simpleValuation, operatingMargin[i], revenueGrowthRate[i], taxRate[i], 
                                              costOfCapital[i], salesToCapital[i] * 100, forecastYears, terminalRevenueGrowthRate, 
                                              baseRevenue, debt, shares, cash): i for i in stqdm(range(len(operatingMargin)))}
             for future in concurrent.futures.as_completed(future_to_val):
-                url = future_to_val[future]
                 data = future.result()
                 if data > 0:
                     valuationDensity.append(data)
@@ -90,12 +89,11 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
         
     valJSON = json.dumps(dictList)
     with open('valJSON.json', 'w') as f:
-        json.dump(valJSON, f)
+        json.dump(valJSON, f, ensure_ascii=False, indent=2)
         
     return valuationDensity
 
 
-# https://numpy.org/doc/1.16/reference/routines.random.html
 if __name__ == "__main__":
     forecastYears = 10
     df = pd.read_csv('csv/tickers.csv')
