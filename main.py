@@ -3,7 +3,6 @@ import pandas as pd
 from stqdm import stqdm
 import concurrent.futures
 import json
-
 from dcfModel import DCF
 from scraper import StockInfo
 import trends
@@ -42,7 +41,6 @@ def get_valuationChecker(df, tickers, forecastYears):
 
         valuation = make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapital, salesToCapital * 100, forecastYears, 
                                 terminalRevenueGrowthRate, baseRevenue, debt, shares, cash)
-        
         print(operatingMargin)
         print(revenueGrowthRate)
         print(taxRate)
@@ -72,7 +70,7 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                                                     forecastYears, 'linear', tickerData['TaxRateEndDistribution'])
         salesToCapital = trends.createTrendAndDistribution(k, tickerData['salesToCapital'], tickerData['salesToCapital'], forecastYears, 'linear', '')
         valuationDensity = []
-        with concurrent.futures.ProcessPoolExecutor() as executor:            
+        with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_val = {executor.submit(make_simpleValuation, operatingMargin[i], revenueGrowthRate[i], taxRate[i], 
                                              costOfCapital[i], salesToCapital[i] * 100, forecastYears, terminalRevenueGrowthRate, 
                                              baseRevenue, debt, shares, cash): i for i in stqdm(range(len(operatingMargin)))}
@@ -81,7 +79,7 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                 if data > 0:
                     valuationDensity.append(data)
         
-        valuationDensity = list(np.histogram(valuationDensity, density=True, bins = int(np.ceil(np.sqrt(k)))))
+        valuationDensity = list(np.histogram(valuationDensity, density=True, bins = 100))
         
         valuationDensity[0] = valuationDensity[0] / np.sum(valuationDensity[0])
         valuationDensity = [valuationDensity[0], 0.5*(valuationDensity[1][1:]+valuationDensity[1][:-1])]

@@ -91,13 +91,13 @@ class DCF:
     def make_PV(self):
         if self.FCFF[0] == 0:
             self.make_FCFF()
-       
+
         if self.cumulatedDiscountFactor[0] == 0:
             self.make_cumulatedDiscountFactor()
         
         for i in range(self.forecastYears):
             self.PV[i] = self.FCFF[i] * self.cumulatedDiscountFactor[i]
-            
+        
         return self.PV
     
     def make_EquityValue(self):
