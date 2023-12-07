@@ -26,14 +26,12 @@ def createTrendAndDistribution(k, start, stop, period, trend, distribution, targ
     numberList = []
     if target == "stop":
         if distribution == 'normal':
-            stop = np.random.normal(np.mean([start, stop]), np.std([start, stop]), k)
+            stop = np.random.normal(stop, stop * 0.2, k)
         elif distribution == 'uniform':
-            stop = np.random.uniform(start, stop + start, k)
+            stop = np.random.uniform(stop - stop * 0.2, stop + stop * 0.2, k)
+
         elif distribution == 'triangular':
-            if start < stop:
-                stop = np.random.triangular(start, np.mean([start, stop]), stop, k)
-            else:
-                stop = np.random.triangular(stop, np.mean([start, stop]), start, k)
+                stop = np.random.triangular(stop - stop * 0.2, stop, stop + stop * 0.2, k)
         else:
             stop = [stop for i in range(k)]
         

@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 #http://www.columbia.edu/~ks20/FE-Notes/4700-07-Notes-GBM.pdf
 def gbm(price, x, stdx, prob, years, simNum):
     # drift coefficent - how fast path price moves
-    mu = 0.001
+    mu = 0.15
     # number of steps
-    n = 100
+    n = 12 * years
     # volatility
     #sigma = np.std(x)
     sigma = stdx
@@ -80,7 +80,7 @@ def make_GBM(data ,ticker, years = 10, simNum = 10000):
     
 
 def forecastAllPaths(years = 10, simNum = 1000):
-    f = open('valJSON.json')
+    f = open('jsons/valJSON.json')
     data = json.loads(json.loads(f.read()))
     pricesDict = {"years" :  years,"simNum" : simNum}
     for ticker in data.keys():
@@ -102,7 +102,7 @@ def forecastAllPaths(years = 10, simNum = 1000):
 
 
     pricesDict = json.dumps(pricesDict)
-    with open('gbmForecast.json', 'w') as f:
+    with open('jsons/gbmForecast.json', 'w') as f:
         json.dump(pricesDict, f, ensure_ascii=False, indent=2)
  
 if __name__ == "__main__":

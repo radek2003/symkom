@@ -30,14 +30,14 @@ if sidebar == "Simulations":
         denst = main.get_valuationDistribution(df, df["ticker"].to_list(), 10, k)
 
 if sidebar == "Simulations vizualizations":
-    f = open('valJSON.json')
+    f = open('jsons/valJSON.json')
     data = json.loads(json.loads(f.read()))
     for ticker in data.keys():
         fig = px.bar(x =data[ticker]["x"], y = data[ticker]["y"], title=ticker)
         st.plotly_chart(fig)
         
 if sidebar == "GBM Forecast":
-    f = open('gbmForecast.json')
+    f = open('jsons/gbmForecast.json')
     data = json.loads(json.loads(f.read()))
     
     if st.button("Run new GBM simulation"):

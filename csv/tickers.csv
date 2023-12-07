@@ -1,7 +1,12 @@
-﻿ticker,industry,operatingMarginStart,operatingMarginTarget,operatingMarginDistribution,operatingMarginGrowthTrend,RevenueGrowthRateStart,RevenueGrowthRateEnd,RevenueGrowthRateTerminalValue,RevenueGrowthRateDistribution,RevenueGrowthRateGrowthTrend,CostofcapitalStart,CostofcapitalEnd,CostofcapitalTrend,CostofcapitalDistribution,salesToCapital,salesToCapitalDistribution,TaxRateStart,TaxRateEnd,TaxRateEndDistribution
-NVDA,Semiconductors,20.0,40.0,normal,linear,34.0,10.0,6,uniform,cyclical,12.21,8.4,linear,triangular,1.15,normal,10.0,20.0,uniform
-WMT,Retail,3.95,5,normal,linear,6.79,7.0,5,uniform,linear,7.76,10.67,linear,normal,3.5,normal,37.4,33.3,uniform
-SHEL,Energry,8.74,15.1,cyclical,cyclical,-8.26,-21.01,2,linear,linear,7.53,8.43,linear,uniform,1.16,triangular,13.4,10.4,normal
-AMZN,Retail,7.82,20,normal,linear,9.4,10,6,normal,linear,10.86,8.36,linear,triangular,5,normal,21.0,21.0,uniform
-AAPL,Technology,29.23,29.82,normal,linear,-2,10.6,5,linear,linear,7.69,8.59,linear,normal,5,triangular,16.2,20.0,uniform
-TMUS,Telecommunications,19.13,19.25,normal,linear,-2.1,-1.16,5,linear,linear,7.93,6.74,linear,normal,3.84,normal,24.47,24.47,uniform
+ticker,industry,operatingMarginStart,operatingMarginTarget,operatingMarginDistribution,operatingMarginGrowthTrend,RevenueGrowthRateStart,RevenueGrowthRateEnd,RevenueGrowthRateTerminalValue,RevenueGrowthRateDistribution,RevenueGrowthRateGrowthTrend,CostofcapitalStart,CostofcapitalEnd,CostofcapitalTrend,CostofcapitalDistribution,salesToCapital,salesToCapitalDistribution,TaxRateStart,TaxRateEnd,TaxRateEndDistribution
+NVDA,Semiconductors,20.0,40.0,normal,linear,34.0,20.0,6,uniform,cyclical,12.21,8.4,linear,triangular,1.15,normal,10.0,20.0,uniform
+WMT,Retail,3.95,5.0,normal,linear,6.79,7.0,5,uniform,linear,7.76,10.67,linear,normal,3.5,normal,37.4,33.3,uniform
+SHEL,Energry,8.74,20.0,uniform,cyclical,-8.26,10.0,2,linear,linear,7.53,8.43,linear,uniform,1.16,triangular,13.4,10.4,normal
+AMZN,Retail,7.82,10.0,normal,linear,9.4,10.0,5,normal,linear,10.86,8.36,linear,triangular,4.11,normal,21.0,21.0,uniform
+AAPL,Technology,29.23,40.0,normal,linear,-2.0,10.6,5,linear,linear,7.69,8.59,linear,normal,4.1,triangular,16.2,20.0,uniform
+TMUS,Telecommunications,19.13,19.25,normal,linear,-2.1,5.0,5,linear,linear,7.93,6.74,linear,normal,0.4,normal,24.47,24.47,uniform
+MSFT,Technology,47.59,52.93,normal,cyclical,12.76,10.0,3,linear,linear,7.62,8.23,linear,uniform,2.32,normal,22.0,22.0,uniform
+TSLA,Automotive,13.46,40.0,normal,cyclical,28.0,15.0,9,uniform,cyclical,9.4,15.57,linear,triangular,5.0,normal,8.25,8.17,uniform
+PFE,Healthcare,23.83,24.01,normal,cyclical,-39.0,20.0,1,uniform,cyclical,6.31,6.42,linear,triangular,2.38,triangular,27.21,28.76,uniform
+GOOG,Technology,21.34,22.46,cyclical,cyclical,10.5,11.0,5,uniform,cyclical,9.83,10.99,linear,uniform,1.66,normal,7.11,7.11,uniform
+KO,Consuer Staples,14.0,20.0,normal,cyclical,8.0,11.0,3,uniform,cyclical,6.86,7.06,linear,normal,7.0,normal,18.1,18.1,uniform

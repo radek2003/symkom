@@ -7,6 +7,14 @@ from dcfModel import DCF
 from scraper import StockInfo
 import trends
 
+def reject_outliers(data):
+    q1, q3 = np.percentile(data, [25 ,75])
+    iqr = q3 - q1
+    q_low = q1 - iqr * 1.5
+    q_hi  = q3 + iqr * 1.5
+    data = data[data < q_hi]
+    data = data[data > q_low]
+    return data
 
 def make_simpleValuation(operatingMargin, revenueGrowthRate, taxRate, costOfCapital, 
                  salesToCapital, forecastYears, terminalRevenueGrowthRate, baseRevenue, debt, shares, cash):
@@ -79,8 +87,11 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                 if data > 0:
                     valuationDensity.append(data)
         
+        try:
+            valuationDensity = reject_outliers(np.array(valuationDensity))
+        except:
+            pass
         valuationDensity = list(np.histogram(valuationDensity, density=True, bins = 100))
-        
         valuationDensity[0] = valuationDensity[0] / np.sum(valuationDensity[0])
         valuationDensity = [valuationDensity[0], 0.5*(valuationDensity[1][1:]+valuationDensity[1][:-1])]
         dictList[ticker] = {
@@ -88,7 +99,7 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
                 "y" : list(valuationDensity[0])}
         
     valJSON = json.dumps(dictList)
-    with open('valJSON.json', 'w') as f:
+    with open('jsons/valJSON.json', 'w') as f:
         json.dump(valJSON, f, ensure_ascii=False, indent=2)
         
     return valuationDensity
