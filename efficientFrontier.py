@@ -7,7 +7,7 @@ from pypfopt import expected_returns
 def make_efficentFrontier(stock, weightsFilename = "weights"):
     mu = expected_returns.mean_historical_return(stock, frequency=12)
     S = risk_models.sample_cov(stock)
-    ef = EfficientFrontier(mu, S)
+    ef = EfficientFrontier(mu, S, weight_bounds=(0, 0.5))
     raw_weights = ef.max_sharpe()
     cleaned_weights = ef.clean_weights()
     ef.portfolio_performance(verbose=True)
@@ -15,7 +15,7 @@ def make_efficentFrontier(stock, weightsFilename = "weights"):
     
     return cleaned_weights
     
-def make_GBMForecastDF(forecastFilename):
+def make_GBMForecastDF(forecastFilename, percentage):
     f = open(forecastFilename)
     data = json.loads(json.loads(f.read()))
     df = pd.DataFrame()
@@ -24,7 +24,7 @@ def make_GBMForecastDF(forecastFilename):
         if ticker == "years" or ticker == "simNum":
             continue
         if i == 0:
-            df = pd.DataFrame.from_dict(data[ticker]["gbm75"])
+            df = pd.DataFrame.from_dict(data[ticker][f"gbm{percentage}"])
             df.rename(columns = {0:ticker}, inplace = True)
         else:
             tempdf = pd.DataFrame.from_dict(data[ticker]["gbm50"])
@@ -37,11 +37,10 @@ def make_GBMForecastDF(forecastFilename):
 
 def get_efficentFrontier(forecastFilename, weightsFilename = "weights", percentage = 50):
     if "json" in forecastFilename:
-        df = make_GBMForecastDF(forecastFilename)
+        df = make_GBMForecastDF(forecastFilename, percentage)
     else:
         df = pd.read_csv(forecastFilename)
     
-    print(df)
     return df
 
 df = get_efficentFrontier("jsons/gbmForecast.json")

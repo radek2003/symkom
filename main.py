@@ -85,8 +85,7 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
             for future in concurrent.futures.as_completed(future_to_val):
                 data = future.result()
                 if data > 0:
-                    valuationDensity.append(data)
-        
+                    valuationDensity.append(np.round(data, 2))
         try:
             valuationDensity = reject_outliers(np.array(valuationDensity))
         except:

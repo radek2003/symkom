@@ -4,12 +4,12 @@ import plotly.express as px
 import numpy as np
 import main
 import json
-import GBM
+import pathForecast
 st.set_page_config(layout="wide")
 
 
 with st.sidebar:
-    sidebar = st.selectbox("Select operation", ["Simulations", "Simulations vizualizations", "GBM Forecast"])
+    sidebar = st.selectbox("Select operation", ["Simulations", "Simulations vizualizations", "GBM Forecast", "Universal Forecast"])
 
 df = pd.read_csv('csv/tickers.csv')
 
@@ -41,10 +41,23 @@ if sidebar == "GBM Forecast":
     data = json.loads(json.loads(f.read()))
     
     if st.button("Run new GBM simulation"):
-        GBM.forecastAllPaths()
+        pathForecast.forecastGBMAllPaths()
     
-    #percentage = st.selectbox("Select percentage", ["25", "50", "75"], index = 1)
-    #row = "gbm" + str(percentage)
+    for ticker in data.keys():
+        if ticker == "years" or ticker == "simNum":
+            continue
+        
+        df = pd.DataFrame.from_dict(data[ticker])
+        fig = px.line(df, x = "time",  y = list(df.columns)[:-1], title=ticker )
+        st.plotly_chart(fig)
+        
+if sidebar == "Universal Forecast":
+    f = open('jsons/universalForecast.json')
+    data = json.loads(json.loads(f.read()))
+    
+    if st.button("Run new universal simulation"):
+        pathForecast.forecastUniversalAllPaths()
+    
     for ticker in data.keys():
         if ticker == "years" or ticker == "simNum":
             continue

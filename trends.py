@@ -28,12 +28,12 @@ def createTrendAndDistribution(k, start, stop, period, trend, distribution, targ
         if distribution == 'normal':
             stop = np.random.normal(stop, stop * 0.2, k)
         elif distribution == 'uniform':
-            stop = np.random.uniform(stop - stop * 0.2, stop + stop * 0.2, k)
+            stop = np.random.uniform(stop, stop + stop * 0.2, k)
 
         elif distribution == 'triangular':
-                stop = np.random.triangular(stop - stop * 0.2, stop, stop + stop * 0.2, k)
+                stop = np.random.triangular(stop * 0.9, stop, stop  * 1.5, k)
         else:
-            stop = [stop for i in range(k)]
+            stop = np.random.normal(stop, stop * 0.1, k)
         
         if trend == "cyclical":
             numberList = [createCyclicalTrend(start, x, period) for x in stop]
