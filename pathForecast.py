@@ -31,8 +31,8 @@ def gbm(price, x, stdx, prob, years, simNum):
 
 def universalModel(price, x, prob, years, simNum):
     results = []
-    volatility = 0.3
-    drift = 0.5
+    volatility = 0.5
+    drift = 0.2
     months = 12 * years + 1
     for i in range(simNum):
         basic = np.array([price] * months)
@@ -94,7 +94,7 @@ def unpackSimulation(ticker, prices, time, pricesDict):
         "gbm50": gbm50,
         "gbm60" : gbm60,
         "gbm75" : gbm75,
-        "time" : np.round(time.tolist(), 2),
+        "time" : np.round(time, 2).tolist(),
     }
     
     return pricesDict
@@ -102,7 +102,7 @@ def unpackSimulation(ticker, prices, time, pricesDict):
 def forecastGBMAllPaths(years = 10, simNum = 1000):
     f = open('jsons/valJSON.json')
     data = json.loads(json.loads(f.read()))
-    pricesDict = {"years" :  years,"simNum" : simNum}
+    pricesDict = {"years" : years, "simNum" : simNum}
     for ticker in data.keys():
         prices, time = make_GBM(data, ticker, years, simNum = simNum)            
         pricesDict = unpackSimulation(ticker, prices, time, pricesDict)
@@ -114,7 +114,7 @@ def forecastGBMAllPaths(years = 10, simNum = 1000):
 def forecastUniversalAllPaths(years = 10, simNum = 1000):
     f = open('jsons/valJSON.json')
     data = json.loads(json.loads(f.read()))
-    pricesDict = {"years" :  years,"simNum" : simNum}
+    pricesDict = {"years" : years, "simNum" : simNum}
     for ticker in data.keys():
         prices, time = make_universal(data, ticker, years, simNum = simNum)            
         pricesDict = unpackSimulation(ticker, prices, time, pricesDict)

@@ -96,10 +96,11 @@ def get_valuationDistribution(df, tickers, forecastYears, k = 1000):
         dictList[ticker] = {
                 "x" : list(valuationDensity[1]),
                 "y" : list(valuationDensity[0])}
-        
-    valJSON = json.dumps(dictList)
-    with open('jsons/valJSON.json', 'w') as f:
-        json.dump(valJSON, f, ensure_ascii=False, indent=2)
+    
+    if len(tickers) > 1:
+        valJSON = json.dumps(dictList)
+        with open('jsons/valJSON.json', 'w') as f:
+            json.dump(valJSON, f, ensure_ascii=False, indent=2)
         
     return valuationDensity
 

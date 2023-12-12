@@ -10,12 +10,12 @@ def make_efficentFrontier(stock, weightsFilename = "weights"):
     ef = EfficientFrontier(mu, S, weight_bounds=(0, 0.5))
     raw_weights = ef.max_sharpe()
     cleaned_weights = ef.clean_weights()
-    ef.portfolio_performance(verbose=True)
-    ef.save_weights_to_file(f"csv/{weightsFilename}.csv")
+    #ef.portfolio_performance(verbose=True)
+    #ef.save_weights_to_file(f"csv/{weightsFilename}.csv")
     
     return cleaned_weights
     
-def make_GBMForecastDF(forecastFilename, percentage):
+def make_ForecastDF(forecastFilename, percentage):
     f = open(forecastFilename)
     data = json.loads(json.loads(f.read()))
     df = pd.DataFrame()
@@ -37,11 +37,9 @@ def make_GBMForecastDF(forecastFilename, percentage):
 
 def get_efficentFrontier(forecastFilename, weightsFilename = "weights", percentage = 50):
     if "json" in forecastFilename:
-        df = make_GBMForecastDF(forecastFilename, percentage)
+        df = make_ForecastDF(forecastFilename, percentage)
     else:
         df = pd.read_csv(forecastFilename)
     
-    return df
-
-df = get_efficentFrontier("jsons/gbmForecast.json")
-print(make_efficentFrontier(df, weightsFilename = "weights"))
+    ef = make_efficentFrontier(df)
+    return ef

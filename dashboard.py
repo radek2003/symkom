@@ -5,11 +5,13 @@ import numpy as np
 import main
 import json
 import pathForecast
+from efficientFrontier import get_efficentFrontier
 st.set_page_config(layout="wide")
 
 
 with st.sidebar:
-    sidebar = st.selectbox("Select operation", ["Simulations", "Simulations vizualizations", "GBM Forecast", "Universal Forecast"])
+    sidebar = st.selectbox("Select operation", ["Simulations", "Simulations vizualizations", 
+                                                "GBM Forecast", "Universal Forecast", "Efficient Frontier"])
 
 df = pd.read_csv('csv/tickers.csv')
 
@@ -65,3 +67,12 @@ if sidebar == "Universal Forecast":
         df = pd.DataFrame.from_dict(data[ticker])
         fig = px.line(df, x = "time",  y = list(df.columns)[:-1], title=ticker )
         st.plotly_chart(fig)
+        
+if sidebar == "Efficient Frontier":
+    ef = get_efficentFrontier("jsons/universalForecast.json", percentage=50)
+    st.write("universalForecast.json")
+    st.write(ef)
+    
+    ef = get_efficentFrontier("jsons/gbmForecast.json", percentage=50)
+    st.write("gbmForecast.json")
+    st.write(ef)
