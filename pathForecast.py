@@ -6,13 +6,9 @@ import json
 import matplotlib.pyplot as plt
 
 #http://www.columbia.edu/~ks20/FE-Notes/4700-07-Notes-GBM.pdf
-def gbm(price, x, stdx, prob, years, simNum):
-    # drift coefficent - how fast path price moves
-    mu = 0.05
+def gbm(price, x, mu, sigma, prob, years, simNum):
     # number of steps
     n = 12 * years
-    # volatility
-    sigma = 0.15
     # calc each time step
     dt = years/n
     # simulation using numpy arrays
@@ -52,7 +48,7 @@ def weighted_avg_and_std(values, weights):
     return (average, math.sqrt(variance))
 
 
-def make_GBM(data ,ticker, years = 10, simNum = 10000):
+def make_GBM(data, ticker, years = 10, simNum = 10000):
     tick = StockInfo(ticker)
     data = data[ticker]
     price = tick.get_marketStockPrice()
@@ -63,7 +59,13 @@ def make_GBM(data ,ticker, years = 10, simNum = 10000):
     # center returns around 0
     x-= meanx
     x /= stdx
-    prices, time = gbm(price, x, stdx,prob, years, simNum)
+    
+    df = pd.DataFrame(tick.get_historicalPrices())
+    df['log_ret'] = np.log(df["Adj Close"]) - np.log(df["Adj Close"].shift(1))
+    mu = df['log_ret'].mean()
+    sigma = df['log_ret'].std()
+    
+    prices, time = gbm(price, x, mu, sigma, prob, years, simNum)
         
     return prices, time
 
