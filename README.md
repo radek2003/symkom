@@ -8,7 +8,7 @@ This Python-based project combines probabilistic company valuation, time series 
 
 ### 1. Probabilistic Valuation Framework
 
-- **Objective:** Challenge market efficiency assumptions by deriving a distribution of company stock prices using a probabilistic Discounted Cash Flow (DCF) valuation model.
+- **Objective:** Challenge market efficiency assumptions by deriving a distribution of company stock prices using a Monte-Carlo simulation for Discounted Cash Flow (DCF) model.
   
 - **Key Components:**
   - Data Collection
