@@ -8,3 +8,4 @@ streamlit
 plotly
 stqdm
 PyPortfolioOpt
+cvxopt

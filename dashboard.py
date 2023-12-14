@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import numpy as np
 import main
 import json
 import pathForecast
-from efficientFrontier import get_efficentFrontier
+from efficientFrontier import get_efficentFrontierOPT, get_GraphefficentFrontier
 st.set_page_config(layout="wide")
 
 
@@ -69,10 +68,14 @@ if sidebar == "Universal Forecast":
         st.plotly_chart(fig)
         
 if sidebar == "Efficient Frontier":
-    ef = get_efficentFrontier("jsons/universalForecast.json", percentage=50)
+    #ef = get_efficentFrontierOPT("jsons/universalForecast.json", percentage=50)
     st.write("universalForecast.json")
-    st.write(ef)
+    fig, sharpe, vol = get_GraphefficentFrontier("jsons/universalForecast.json", percentage=50)
+    st.write(sharpe)
+    st.pyplot(fig)
     
-    ef = get_efficentFrontier("jsons/gbmForecast.json", percentage=50)
+    #ef = get_efficentFrontierOPT("jsons/gbmForecast.json", percentage=60)
     st.write("gbmForecast.json")
-    st.write(ef)
+    fig, sharpe, vol = get_GraphefficentFrontier("jsons/gbmForecast.json", percentage=50)
+    st.write(sharpe)
+    st.pyplot(fig)
