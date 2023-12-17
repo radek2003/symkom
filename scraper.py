@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from pandas_datareader import data as pdr
 from bs4 import BeautifulSoup
 import requests
 import regex as re
